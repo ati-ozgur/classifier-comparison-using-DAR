@@ -1,4 +1,4 @@
-# classifier-comparison-using-DAR
+# Classifier Selection in Resource Limited Hardware: Decision Analysis and Resolution Approach
 
 This code repository contains the source code for the article "Classifier Selection in Resource Limited Hardware: Decision Analysis and Resolution Approach" submitted to [Journal of Intelligent Systems: Theory and Applications](https://dergipark.org.tr/en/pub/jista)
 
