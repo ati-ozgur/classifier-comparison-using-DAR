@@ -11,36 +11,20 @@ from helpers import *
 
 
 def run_experiment_once(classifier_name,classifier,k_fold,X,y):
-    accuracy_score_sum = 0.0
-    training_time_sum = 0.0 
-    testing_time_sum = 0
-    model_size_sum = 0
+    l_results = []
     for k, (train, test) in enumerate(k_fold.split(X, y)):
+
         print(f"classifier name {classifier_name},cross validation count {k}")
         X_train, X_test = X[train], X[test]
         y_train, y_test = y[train], y[test]
         ret_metrics = train_model(X_train, X_test, y_train, y_test,classifier_name, classifier,k,CV_COUNT)
         print(ret_metrics)
-        accuracy_score_sum += ret_metrics["accuracy_score"]
-        training_time_sum += ret_metrics["training_time"]
-        testing_time_sum += ret_metrics["testing_time"]
-        model_size_sum += ret_metrics["model_size"]
 
-    mean_accuracy_score = accuracy_score_sum / CV_COUNT
-    mean_training_time = training_time_sum / CV_COUNT
-    mean_testing_time = testing_time_sum / CV_COUNT
-    mean_model_size = model_size_sum / CV_COUNT
+        l_results.append(ret_metrics)
 
 
-    result_dictionary = {}
-    result_dictionary["classifier_name"] = classifier_name    
-    result_dictionary["mean_accuracy_score"] = mean_accuracy_score    
-    result_dictionary["mean_training_time"] = mean_training_time    
-    result_dictionary["mean_testing_time"] = mean_testing_time    
-    result_dictionary["mean_model_size"] = mean_model_size    
 
-
-    return result_dictionary
+    return l_results
 
 
 def get_dataframe(df_filename):
@@ -85,10 +69,10 @@ def run_experiment(dataset_type,CV_COUNT = 3,clf_index = None):
             print(f"results exists for {classifier_name}")
         else:
             clf = classifier_dict["Classifier"]
-            result_dictionary = run_experiment_once(classifier_name,clf,k_fold,X,y)
+            result = run_experiment_once(classifier_name,clf,k_fold,X,y)
             df = get_dataframe(df_filename)
-            df = df.append(result_dictionary,ignore_index=True)
-            print(result_dictionary)
+            df = df.append(result,ignore_index=True)
+            print(result)
             df.to_csv(df_filename,index=False)
 
 

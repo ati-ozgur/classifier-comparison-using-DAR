@@ -1,5 +1,9 @@
 import pandas as pd
 
+FILENAME="kdd99_10percent_10_fold_2021-01-23"
+
+df = pd.read_csv(f"./results/mean_{FILENAME}.csv")
+
 
 def normalize_min_max(df,column_name):
 	new_column_name = column_name.replace("mean_","weighted_")
@@ -8,8 +12,6 @@ def normalize_min_max(df,column_name):
 	df[new_column_name] = (df[column_name] - min_val) / (max_val - min_val)
 	if not "accuracy" in column_name:
 		df[new_column_name] = 1 - df[new_column_name]
-
-df = pd.read_csv("./results/kdd99_10percent_10_fold_2020-09-15.csv")
 
 weight_accuracy_score = 40
 weight_model_size = 30
