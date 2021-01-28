@@ -1,6 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier, BaggingClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, make_scorer
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, make_scorer,roc_auc_score
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -15,6 +15,11 @@ import sklearn.datasets
 from sklearn.preprocessing import OrdinalEncoder
 import joblib
 import numpy as np
+
+import six
+import sys
+sys.modules['sklearn.externals.six'] = six
+sys.modules['sklearn.externals.joblib'] = joblib
 
 
 from pathlib import Path
@@ -69,16 +74,22 @@ def train_model(X_train, X_test, Y_train, Y_test, classifier_name,classifier,cv_
     ret_metrics["t_training_start"] = t_training_start
     ret_metrics["t_training_end"] = t_training_end
     t_testing_start = time()
-    pred = classifier.predict(X_test)
+    Y_test_pred = classifier.predict(X_test)
     t_testing_end = time()
     ret_metrics["testing_time"] = t_testing_end - t_testing_start
     ret_metrics["t_testing_start"] = t_testing_start
     ret_metrics["t_testing_end"] = t_testing_end
 
+    ret_metrics["accuracy_score"] = accuracy_score(Y_test,Y_test_pred) 
+    ret_metrics["precision_score"] = precision_score(Y_test,Y_test_pred,average='micro') 
+    ret_metrics["recall_score"] = recall_score(Y_test,Y_test_pred,average='micro') 
+    ret_metrics["f1_score"] = f1_score(Y_test,Y_test_pred,average='micro') 
+    ret_metrics["confusion_matrix"] = confusion_matrix(Y_test,Y_test_pred) 
+    #ret_metrics["roc_auc_score"] = roc_auc_score(Y_test,Y_test_pred,average='micro',multi_class="ovo") 
+    ret_metrics["classifier_name"] = classifier_name
+    ret_metrics["cross_validation_count"] = cv_current
 
 
-
-    ret_metrics["accuracy_score"] = classifier.score(X_test, Y_test) 
 
     model_filename = f"model_files/{classifier_name}_size_{row_size}_cv_{cv_current}_{cv_count}.sav"
     joblib.dump(classifier, model_filename)
